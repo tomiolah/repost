@@ -3,10 +3,27 @@ const request = require('request');
 
 // User Model
 const User = require('../../models/user');
-const Subrepost = require('../../models/subrepost');
+const Post = require('../../models/post');
+const Comment = require('../../models/comment');
 const pw = require('../../helpers/password');
 
 const router = express.Router();
+
+const calculateRating = async (username) => {
+  // Get all Posts
+  const posts = await Post.find({ username });
+
+  // Get all comments
+  const comments = await Comment.find({ username });
+
+  // Calculate rating
+  let rating = 0;
+
+  posts.forEach((post) => { rating += post.rating; });
+  comments.forEach((comment) => { rating += comment.rating; });
+
+  return rating;
+};
 
 // GET ALL USERS
 router.get('/', async (req, res) => {
@@ -14,12 +31,15 @@ router.get('/', async (req, res) => {
     const users = await User.find();
     const output = [];
 
-    // We don't send the saved passwords,
-    // even though they are hashed and salted
-    users.forEach(user => output.push({
-      username: user.username,
-      subreposts: user.subreposts,
-    }));
+    users.forEach(async (user) => {
+      // Calculate User Rating
+      const userRating = await calculateRating(user.username);
+      output.push({
+        username: user.username,
+        subreposts: user.subreposts,
+        rating: userRating,
+      });
+    });
 
     res.json(output);
   } catch (err) {
@@ -36,9 +56,13 @@ router.get('/:username', async (req, res) => {
       return;
     }
     const users = await User.find({ username });
+
+    // Calculate Rating
+    const rating = await calculateRating(username);
     res.json({
       username: users.username,
       subreposts: users.subreposts,
+      rating,
     });
   } catch (err) {
     res.sendStatus(500);
@@ -77,57 +101,8 @@ router.post('/', async (req, res) => {
   }
 });
 
-// ADD / REMOVE SUBREPOST TO / FROM USER
-router.patch('/:username', async (req, res) => {
-  try {
-    const {  username } = req.params;
-    const { subrepost, rm } = req.body;
-
-    if (!username || !subrepost) {
-      res.sendStatus(400);
-      return;
-    }
-
-    // Check if subrepost exists
-    const subExists = await Subrepost.findOne({ name: subrepost });
-    if (!subExists) {
-      res.sendStatus(404);
-      return;
-    }
-
-    // Check if user exists
-    const user = await User.findOne({ username });
-    if (!user) {
-      res.sendStatus(404);
-      return;
-    }
-
-    if (rm) {
-      user.subreposts = user.subrepost.filter(sr => sr !== subrepost);
-
-      await request.patch(`/api/subreposts/${subrepost}`, {
-        json: true,
-        headers: [{
-          name: 'content-type',
-          value: 'application/json',
-        }],
-        body: JSON.stringify({
-          username,
-          rm: true,
-        }),
-      });
-    } else user.subreposts.push(subrepost);
-
-    const err = User.updateOne({ username }, { $set: { subreposts: user.subreposts } });
-    if (err) throw err;
-  } catch (err) {
-    console.error(err);
-    res.sendStatus(500);
-  }
-});
-
 // DELETE USER
-router.delete('/:username', (req, res) => {
+router.delete('/:username', async (req, res) => {
   const { username } = req.params;
 
   if (!username) {
@@ -135,6 +110,33 @@ router.delete('/:username', (req, res) => {
     return;
   }
 
+  // Remove from Subreposts
+  // Get affected SRs
+  const subreposts = await request.get(`/api/subreposts?username=${username}`);
+
+  subreposts.forEach(async (subrepost) => {
+    await request.patch(`/api/subreposts/${subrepost.name}`, {
+      json: true,
+      body: JSON.stringify({
+        username,
+        remove: true,
+      }),
+    });
+  });
+
+  // Remove Posts
+  // Get Posts
+  await request.delete(`/api/posts?username=${username}`);
+
+  // Remove Comments
+  // Get Comments
+  const comments = await request.get(`/api/comments?username=${username}`);
+
+  comments.forEach(async (comment) => {
+    await request.delete(`/api/comments/${comment._id}`);
+  });
+
+  // Finally, delete the user
   User.deleteOne({ username }, (err) => {
     if (err) {
       console.error(err);

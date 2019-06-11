@@ -7,11 +7,17 @@ const Subrepost = require('../../models/subrepost');
 
 const router = express.Router();
 
-// GET ALL SRs
+// GET ALL SRs / BY USER
 router.get('/', async (req, res) => {
+  const { username } = req.query;
+
   try {
     const subreposts = await Subrepost.find();
-    res.json(subreposts);
+    const output = (username)
+      ? subreposts.filter(sr => !!sr.users.find(value => value.username === username))
+      : subreposts;
+
+    res.json(output);
   } catch (err) {
     res.sendStatus(500);
   }
@@ -54,47 +60,77 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Add / Remove user as moderator
+// PATCH SR
 router.patch('/:subrepost', async (req, res) => {
   const { subrepost } = req.params;
-  const { username, rm }  = req.body;
+  const { username, moderator, remove } = req.body;
 
-  try {
-    // Check if user exists
-    const userExists = await User.findOne({ username });
-
-    if (!userExists) {
-      res.sendStatus(404);
-      return;
-    }
-
-    // Check if SR exists
-    const sr = await Subrepost({ name: subrepost });
-
-    if (!sr) {
-      res.sendStatus(404);
-      return;
-    }
-
-    let del = false;
-
-    if (rm) {
-      userExists.subreposts = userExists.subreposts.filter(user => user !== username);
-      User.updateOne({ username }, { $set: { subreposts: userExists.subreposts } });
-      sr.moderators = sr.moderators.filter(mod => mod !== username);
-      del = (sr.moderators.length === 0);
-    } else sr.moderators.push(username);
-
-    const err = Subrepost.updateOne({ name: subrepost }, { $set: { moderators: sr.moderators } });
-    if (err) throw err;
-
-    if (del) await request.delete(`/api/subreposts/${subrepost}`);
-
-    res.sendStatus(204);
-  } catch (err) {
-    console.error(err);
-    res.sendStatus(500);
+  if (!username || !User.findOne({ username })) {
+    res.sendStatus(400);
+    return;
   }
+
+  const sub = await Subrepost.findOne({ name: subrepost });
+
+  if (!sub) {
+    res.sendStatus(404);
+    return;
+  }
+
+  // Check if remove
+  if (remove) {
+    // Update Mod Count
+    let count = 0;
+
+    sub.users = sub.users.filter((value) => {
+      count += (value.username !== username && value.moderator) ? 1 : 0;
+      return (value.username !== username);
+    });
+
+    sub.mod_count = count;
+
+    if (count === 0) await request.delete(`/api/subreposts/${subrepost}`);
+    else {
+      await Subrepost.updateOne({ subrepost }, {
+        $set: {
+          mod_count: sub.mod_count,
+          users: sub.users,
+        },
+      });
+    }
+    res.sendStatus(204);
+    return;
+  }
+
+  if (sub.users.find(value => value.username === username)) {
+    // Exists
+    sub.users[sub.users.findIndex(obj => obj.username === username)].moderator = !!moderator;
+  } else {
+    // Not exists -  Add it
+    sub.users.push({
+      username,
+      moderator,
+    });
+  }
+
+  // Count Mods
+  sub.mod_count = sub.users.reduce(
+    (acc, currentValue) => acc + ((currentValue.moderator) ? 1 : 0),
+    0,
+  );
+
+  if (sub.mod_count === 0) await request.delete(`/api/subreposts/${subrepost}`);
+  else {
+    // Update in DB
+    await Subrepost.updateOne({ name: subrepost }, {
+      $set: {
+        mod_count: sub.mod_count,
+        users: sub.users,
+      },
+    });
+  }
+
+  res.sendStatus(204);
 });
 
 router.delete('/:subrepost', async (req, res) => {
@@ -114,15 +150,7 @@ router.delete('/:subrepost', async (req, res) => {
       return;
     }
 
-    // Delete from User collections
-    const users = await User.find();
-
-    users.forEach((usr) => {
-      const temp = usr.subreposts.filter(item => item !== subrepost);
-      User.updateOne({ username: usr.username }, { $set: { subreposts: temp } });
-    });
-
-    // TODO: Delete Post and subcomments
+    // Delete Posts
     request.delete(`/api/posts?subrepost=${subrepost}`);
 
     // Delete SR

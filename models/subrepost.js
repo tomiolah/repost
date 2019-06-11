@@ -15,10 +15,26 @@ const SubrepostSchema = new Schema({
   description: {
     type: String,
     required: false,
+    default: '',
   },
 
-  moderators: {
-    type: Array(String),
+  mod_count: {
+    type: Number,
+    default: 1,
+  },
+
+  users: {
+    type: Array({
+      username: {
+        type: String,
+        require: true,
+      },
+
+      moderator: {
+        type: Boolean,
+        default: false,
+      },
+    }),
     default: [],
   },
 });

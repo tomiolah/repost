@@ -19,11 +19,6 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
-
-  subreposts: {
-    type: Array(String),
-    default: [],
-  },
 });
 
 const User = mongoose.model('user', UserSchema);
