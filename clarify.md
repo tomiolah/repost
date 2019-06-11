@@ -97,7 +97,7 @@
   - Remove By SR - `DELETE /api/posts?subrepost={subrepost}` ✅
   - Remove By User - `DELETE /api/posts?username={username}` ✅
 
-# COMMENT
+# COMMENT ✅
   ```js
     {
       username: String,
@@ -109,25 +109,25 @@
     }
   ```
 
-  - Get All - `GET /api/comments`
-  - Get By ID - `GET /api/comments/{commentID}`
-  - Get By User - `GET /api/comments?username={username}`
-  - Get By Post - `GET /api/comments?postID={postID}`
-  - Get By Parent - `GET /api/comments?parent={parentID}`
-  - Create - `POST /api/comments`
+  - Get All - `GET /api/comments` ✅
+  - Get By ID - `GET /api/comments/{commentID}` ✅
+  - Get By User - `GET /api/comments?username={username}` ✅
+  - Get By Post - `GET /api/comments?postID={postID}` ✅
+  - Get By Parent - `GET /api/comments?parent={parentID}` ✅
+  - Create - `POST /api/comments` ✅
     ```js
       {
         username: String,
         content: String,
-        parent: ObjectID | undefined,
-        post: ObjectID, // Optional if parent defined
+        parentID: ObjectID | undefined,
+        postID: ObjectID, // Optional if parent defined
       }
     ```
-  - Up / Downvote - `PATCH /api/comments/{commentID}`
+  - Up / Downvote - `PATCH /api/comments/{commentID}` ✅
     ```js
       {
         rating: 1 | -1,
       }
     ```
-  - Remove By ID - `DELETE /api/comments/{commentID}`
-  - Remove By Post -  `DELETE /api/comments?post={postID}`
+  - Remove By ID - `DELETE /api/comments/{commentID}` ✅
+  - Remove By Post -  `DELETE /api/comments?post={postID}` ✅
