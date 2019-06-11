@@ -1,0 +1,27 @@
+- Register User `POST /api/users`
+- Login User
+- Join Subrepost `PATCH /api/users/:uid`
+- Leave Subrepost `PATCH /api/users/:uid (rm: true)`
+  - Vocationally
+  - BAN
+- Create Subrepost `POST /api/subreposts`
+- Become MOD `PATCH /api/subreposts/:sr`
+  - Creating SR
+  - Eleveated by MOD
+- Lose MOD `PATCH /api/subreposts/:sr (rm: true)`
+  - Self-Downgrade
+  - Downgrade by other MOD
+  - BAN -> Leave SR
+- MOD
+  - BAN (remove)
+  - Downgrade
+  - Elevate
+  - Leave (last mod -> DELETE SR)
+  - Delete subrepost `DELETE /api/subreposts/:sr` -> Remove from users
+- Create Post `POST /api/posts`
+- Remove Post `DELETE /api/posts/:pid`
+- Upvote Post `PATCH /api/posts/:pid (rating: 1)`
+- Downvote Post `PATCH /api/posts/:pid (rating: -1)`
+- Remove Post (if mod or OP) `DELETE /api/posts/:pid`
+- Add Comment to Post (if member of sub) `POST /api/comments`
+- 
