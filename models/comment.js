@@ -35,7 +35,7 @@ const CommentSchema = new Schema({
   },
 
   raters: {
-    type: Array,
+    type: Object,
     default: [],
   },
 });

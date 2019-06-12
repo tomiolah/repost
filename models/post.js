@@ -30,7 +30,7 @@ const PostSchema = new Schema({
   },
 
   raters: {
-    type: Array,
+    type: Object,
     default: [],
   },
 });
