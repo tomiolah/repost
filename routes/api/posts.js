@@ -114,8 +114,14 @@ router.patch('/:postID', async (req, res) => {
     }
 
     // Update data
-    post.rating += rating;
     post.raters[username] = (rating === 0) ? undefined : rating;
+
+    let ratingUpdated = 0;
+    Object.keys(post.raters).forEach((key) => {
+      ratingUpdated += (post.raters[key]) ? post.raters[key] : 0;
+    });
+
+    post.rating = ratingUpdated;
 
     // Update in DB
     Post.findByIdAndUpdate(postID, { $set: { rating: post.rating, raters: post.raters } });

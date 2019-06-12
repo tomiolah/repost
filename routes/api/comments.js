@@ -119,8 +119,14 @@ router.patch('/:commentID', async (req, res) => {
       res.sendStatus(404);
       return;
     }
-    comment.rating += rating;
     comment.raters[username] = (rating === 0) ? undefined : rating;
+
+    let ratingUpdated = 0;
+    Object.keys(comment.raters).forEach((key) => {
+      ratingUpdated += (comment.raters[key]) ? comment.raters[key] : 0;
+    });
+
+    comment.rating = ratingUpdated;
     await Comment.findByIdAndUpdate(commentID, {
       $set: {
         rating: comment.rating,

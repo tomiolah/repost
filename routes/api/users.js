@@ -110,42 +110,75 @@ router.delete('/:username', async (req, res) => {
     return;
   }
 
-  // Remove from Subreposts
-  // Get affected SRs
-  const subreposts = await request.get(`/api/subreposts?username=${username}`);
+  try {
+    // Remove from Subreposts
+    // Get affected SRs
+    const subreposts = await request.get(`/api/subreposts?username=${username}`);
 
-  subreposts.forEach(async (subrepost) => {
-    await request.patch(`/api/subreposts/${subrepost.name}`, {
-      json: true,
-      body: JSON.stringify({
-        username,
-        remove: true,
-      }),
+    subreposts.forEach(async (subrepost) => {
+      await request.patch(`/api/subreposts/${subrepost.name}`, {
+        json: true,
+        body: JSON.stringify({
+          username,
+          remove: true,
+        }),
+      });
     });
-  });
 
-  // Remove Posts
-  // Get Posts
-  await request.delete(`/api/posts?username=${username}`);
+    // Remove Posts
+    // Get Posts
+    await request.delete(`/api/posts?username=${username}`);
 
-  // Remove Comments
-  // Get Comments
-  const comments = await request.get(`/api/comments?username=${username}`);
+    // Remove Comments
+    // Get Comments
+    let comments = await request.get(`/api/comments?username=${username}`);
 
-  comments.forEach(async (comment) => {
-    await request.delete(`/api/comments/${comment._id}`);
-  });
+    comments.forEach(async (comment) => {
+      await request.delete(`/api/comments/${comment._id}`);
+    });
 
-  // Finally, delete the user
-  User.deleteOne({ username }, (err) => {
-    if (err) {
-      console.error(err);
-      res.sendStatus(500);
-      return;
-    }
+    // Purge and recalculate votes
+    comments = await Comment.find();
+    const posts = await Post.find();
 
-    res.sendStatus(204);
-  });
+    comments.forEach(async (comment) => {
+      try {
+        await request.patch(`/api/comments/${comment._id}`, {
+          json: true,
+          body: JSON.stringify({ rating: 0, username }),
+        });
+      } catch (err) {
+        console.error(err);
+        res.sendStatus(500);
+      }
+    });
+
+    posts.forEach(async (post) => {
+      try {
+        await request.patch(`/api/posts/${post._id}`, {
+          json: true,
+          body: JSON.stringify({ rating: 0, username }),
+        });
+      } catch (err) {
+        console.error(err);
+        res.sendStatus(500);
+      }
+    });
+
+    // Finally, delete the user
+    User.deleteOne({ username }, (err) => {
+      if (err) {
+        console.error(err);
+        res.sendStatus(500);
+        return;
+      }
+
+      res.sendStatus(204);
+    });
+  } catch (err) {
+    console.error(err);
+    res.sendStatus(500);
+  }
 });
 
 module.exports = router;
