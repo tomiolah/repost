@@ -17,7 +17,7 @@ mongoose.set('useCreateIndex', true);
 
 // Connect to MongoDB
 mongoose.connect(db)
-  .then(() => console.log('🧣 :: Connection established'))
+  .then(() => console.log('🗄 :: Connection established'))
   .catch(err => console.err(`!! ${err}`));
 
 // Connect API Routes
