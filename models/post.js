@@ -28,6 +28,11 @@ const PostSchema = new Schema({
     type: Number,
     default: 0,
   },
+
+  raters: {
+    type: Array,
+    default: [],
+  },
 });
 
 const Post = mongoose.model('post', PostSchema);

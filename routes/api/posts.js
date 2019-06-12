@@ -90,9 +90,9 @@ router.post('/', async (req, res) => {
 // UP / DOWNVOTE
 router.patch('/:postID', async (req, res) => {
   const { postID } = req.params;
-  const { rating } = req.body;
+  const { rating, username } = req.body;
 
-  if (!postID || !rating || (rating !== 1 && rating !== -1)) {
+  if (![rating, username].every(value => value !== undefined) || ![-1, 0, 1].includes(rating)) {
     res.sendStatus(400);
     return;
   }
@@ -106,11 +106,19 @@ router.patch('/:postID', async (req, res) => {
       return;
     }
 
+    // Check if user exists
+    const user = await User.findOne({ username });
+    if (!user) {
+      res.sendStatus(404);
+      return;
+    }
+
     // Update data
     post.rating += rating;
+    post.raters[username] = (rating === 0) ? undefined : rating;
 
     // Update in DB
-    Post.findByIdAndUpdate(postID, { $set: { rating: post.rating } });
+    Post.findByIdAndUpdate(postID, { $set: { rating: post.rating, raters: post.raters } });
 
     res.sendStatus(204);
   } catch (error) {

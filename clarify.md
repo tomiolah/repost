@@ -71,6 +71,7 @@
       content: String,
       posted: Date,
       rating: Number,
+      raters: [ username: rating ],
     }
   ```
 
@@ -106,6 +107,7 @@
       rating: Number,
       post: ObjectID,
       parent: ObjectID | undefined,
+      raters: [ username: rating ],
     }
   ```
 
@@ -126,7 +128,7 @@
   - Up / Downvote - `PATCH /api/comments/{commentID}` ✅
     ```js
       {
-        rating: 1 | -1,
+        rating: 1 | 0 | -1,
       }
     ```
   - Remove By ID - `DELETE /api/comments/{commentID}` ✅
