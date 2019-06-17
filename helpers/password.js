@@ -21,13 +21,11 @@ exports.createHash = async (password) => {
   }
 };
 
-exports.checkHash = async (password, hws) => {
+exports.checkHash = (password, hws) => {
   const expectedHash = hws.substring(0, constants.hashSize * 2);
   const salt = Buffer.from(hws.substring(constants.hashSize * 2), 'hex');
 
-  console.log();
-
-  const binaryHash = await crypto.pbkdf2Sync(
+  const binaryHash = crypto.pbkdf2Sync(
     password,
     salt,
     constants.iter,

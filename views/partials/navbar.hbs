@@ -1,0 +1,36 @@
+<div id="navbar" uk-offcanvas="mode: push; overlay: true">
+  <div class="uk-offcanvas-bar">
+    <button class="uk-offcanvas-close uk-nav-center" type="button" uk-close></button>
+    <h2>
+      <img data-src="/static/img/logo.svg" width="25%" uk-img>
+      &nbsp;&nbsp;
+      <a class="uk-link-heading" href="/home">REPOST</a>
+    </h2>
+    <ul class="uk-nav uk-nav-default uk-nav-primary">
+      <li 
+        {{#if home.active}}
+          class="uk-active"
+        {{/if}}
+      ><a href="/home">Home</a></li>
+
+      <li
+        {{#if posts.active}}
+          class="uk-active"
+        {{/if}}
+      ><a>My Posts</a></li>
+
+      <li
+        {{#if subreposts.active}}
+          class="uk-active"
+        {{/if}}
+      ><a>My Subreposts</a></li>
+      
+      <li class="uk-nav-divider"></li>
+      <li>
+        <div class="uk-flex-inline">
+          <h3><a href="/logout"><span uk-icon="icon: sign-out"></span> Logout</a></h3>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>

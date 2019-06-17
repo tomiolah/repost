@@ -1,5 +1,5 @@
 const express = require('express');
-const request = require('request');
+const request = require('request-promise-native');
 
 // User Model
 const User = require('../../models/user');

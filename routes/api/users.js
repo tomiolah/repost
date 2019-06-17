@@ -1,5 +1,5 @@
 const express = require('express');
-const request = require('request');
+const request = require('request-promise-native');
 
 // User Model
 const User = require('../../models/user');
@@ -51,17 +51,31 @@ router.get('/', async (req, res) => {
 router.get('/:username', async (req, res) => {
   try {
     const { username } = req.params;
+    const { password } = req.query;
     if (!username) {
       res.sendStatus(404);
       return;
     }
-    const users = await User.find({ username });
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      res.sendStatus(404);
+      return;
+    }
+
+    if (password) {
+      // Check password against PW in DB
+      const verdict = pw.checkHash(password, user.password);
+      if (verdict) res.sendStatus(204);
+      else res.sendStatus(401);
+      return;
+    }
 
     // Calculate Rating
     const rating = await calculateRating(username);
     res.json({
-      username: users.username,
-      subreposts: users.subreposts,
+      username: user.username,
+      subreposts: user.subreposts,
       rating,
     });
   } catch (err) {
@@ -75,6 +89,14 @@ router.post('/', async (req, res) => {
     const { username, password } = req.body;
     if (!username || !password) {
       res.sendStatus(400);
+      return;
+    }
+
+    // Check if user already exists
+    const user = await User.find({ username });
+
+    if (user) {
+      res.sendStatus(401);
       return;
     }
 
