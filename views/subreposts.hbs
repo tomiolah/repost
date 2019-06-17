@@ -1,0 +1,39 @@
+<h2>My Subreposts
+  {{#if minKarma}}
+    <a href="#modal-center"  class="uk-text-right uk-align-right"  uk-toggle><span uk-icon="icon: plus; ratio: 2"></span></a>
+  {{/if}}
+</h2>
+<hr>
+{{#each subreposts.data}}
+  <div class="uk-margin">
+    <a href="/r/{{this.name}}">
+      <div class="uk-card uk-card-default uk-card-body uk-card-hover">
+        <h2>r/{{this.name}}</h2>
+        <p>{{this.description}}</p>
+      </div>
+    </a>
+  </div>
+{{else}}
+  <div class="uk-card uk-card-default uk-card-body">
+    <h3 class="uk-card-title"><a href="https://thanosjs.org/"><img data-src="/static/img/ig.png" width="5%" uk-img></a> Sigh...</h3>
+    <p>Looks, like Thanos snapped again...</p>
+  </div>
+{{/each}}
+
+<div id="modal-center" class="uk-flex-top" uk-modal>
+  <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+    <button class="uk-modal-close-default" type="button" uk-close></button>
+    <form id="subrepost-form" onsubmit="createSubrepost(event);">
+      <div class="uk-margin">
+        <input class="uk-input" type="text" name="name" id="name" pattern="^[a-zA-Z0-9]+$" placeholder="Subrepost Name" required>
+      </div>
+      <div class="uk-margin">
+        <textarea class="uk-textarea" name="description" id="description" rows="6" placeholder="Description" required></textarea>
+      </div>
+      <input class="uk-input uk-button uk-button-primary" type="submit" value="Create">
+    </form>
+  </div>
+</div>
+
+<script src="/static/js/general.js"></script>
+<script src="/static/js/subrepost.js"></script>

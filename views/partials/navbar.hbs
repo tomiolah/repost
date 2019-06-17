@@ -6,31 +6,38 @@
       &nbsp;&nbsp;
       <a class="uk-link-heading" href="/home">REPOST</a>
     </h2>
-    <ul class="uk-nav uk-nav-default uk-nav-primary">
+    <ul class="uk-nav uk-nav-default uk-nav-primary uk-text-center">
+      <li><h3 id="username">{{username}}</h3></li>
+      <li><h3 id="karma"></h3></li>
+      <li class="uk-nav-divider"></li>
       <li 
         {{#if home.active}}
           class="uk-active"
         {{/if}}
-      ><a href="/home">Home</a></li>
-
-      <li
-        {{#if posts.active}}
-          class="uk-active"
-        {{/if}}
-      ><a>My Posts</a></li>
+      ><a href="/home">🏠 Home</a></li>
 
       <li
         {{#if subreposts.active}}
           class="uk-active"
         {{/if}}
-      ><a>My Subreposts</a></li>
+      ><a href="subreposts">🗃 My Subreposts</a></li>
+
+      <li
+        {{#if posts.active}}
+          class="uk-active"
+        {{/if}}
+      ><a href="/posts">📰 My Posts</a></li>
       
-      <li class="uk-nav-divider"></li>
-      <li>
-        <div class="uk-flex-inline">
-          <h3><a href="/logout"><span uk-icon="icon: sign-out"></span> Logout</a></h3>
+      <a href="/logout">
+        <div class="uk-position-bottom">
+          <li class="uk-nav-divider uk-text-left"></li>
+          <li class="logout">
+            <div class="uk-flex-inline">
+              <h3>🔐 Logout</h3>
+            </div>
+          </li>
         </div>
-      </li>
+      </a>
     </ul>
   </div>
 </div>

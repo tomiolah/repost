@@ -23,6 +23,20 @@ onkeydown = (ev) => {
   else if (ev.key === 'ArrowLeft') UIkit.offcanvas('#navbar').hide();
 };
 
+// Get user karma
+async function getKarma() {
+  // Get username
+  const username = document.getElementById('username').innerText;
+
+  // Get from API
+  const resp = await (await fetch(`/api/users/${username}`)).json();
+
+  // Update GUI element
+  document.getElementById('karma').innerText = resp.rating;
+}
+
+getKarma();
+
 // Get the body, which will listen to the swipe events
 const body = document.getElementById('body');
 

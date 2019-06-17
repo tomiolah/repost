@@ -24,17 +24,7 @@ const SubrepostSchema = new Schema({
   },
 
   users: {
-    type: Array({
-      username: {
-        type: String,
-        require: true,
-      },
-
-      moderator: {
-        type: Boolean,
-        default: false,
-      },
-    }),
+    type: Array,
     default: [],
   },
 });

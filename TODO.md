@@ -1,16 +1,14 @@
 - [x] Login
 - [x] Register
 - [x] Markdown Input & Render
-- [ ] Navbar
-  - [ ] Get karma
-  - [ ] Add entries
-  - [ ] Post
-  - [ ] Comment
+- [x] Navbar
+  - [x] Get karma
+  - [x] Add entries
 - [ ] Subrepost
-  - [ ] My Subreposts
-  - [ ] Create Subrepost (User will be Mod) (min KARMA)
-  - [ ] List Mods
-  - [ ] List Users
+  - [x] My Subreposts
+  - [x] Create Subrepost (User will be Mod) (min KARMA)
+  - [x] List Mods
+  - [x] List Users
   - [ ] **Add Mod / Upgrade User as Mod**
   - [ ] **Add User**
   - [ ] Add User as User
@@ -29,4 +27,9 @@
   - [ ] Add Comment to Post
   - [ ] Delete Comment As OP
   - [ ] **Delete Comment** as Mod
-- [ ] Authorization
+- [x] Authorization
+
+PROGRESS: **38.46 %** ✅
+```
+  10 / 26 (16 left)
+```

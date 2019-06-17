@@ -25,8 +25,6 @@ async function login(event) {
     body: JSON.stringify(data),
   });
 
-  console.log(status);
-
   if (status === 404) {
     UIkit.modal.confirm('No user with provided username! Would you like to register?')
       .then(async () => {

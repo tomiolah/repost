@@ -68,6 +68,7 @@
       _id: ObjectID,
       subrepost: String,
       username: String,
+      title: String,
       content: String,
       posted: Date,
       rating: Number,

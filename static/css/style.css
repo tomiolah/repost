@@ -1,0 +1,22 @@
+#username {
+  color: rgb(87, 171, 226);
+  font-size: 26pt;
+}
+
+.username {
+  color: rgb(87, 171, 226);
+}
+
+#karma {
+  color: #ffb004;
+  margin-bottom: 2pt;
+  margin-top: -1em;
+}
+
+.add {
+  color: green;
+}
+
+.remove {
+  color: firebrick;
+}

@@ -48,8 +48,11 @@ router.post('/', async (req, res) => {
     const err = await Subrepost.create({
       name,
       description: (description) || '',
-      moderators: [
-        username,
+      users: [
+        {
+          username,
+          moderator: true,
+        },
       ],
     });
 

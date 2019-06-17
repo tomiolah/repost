@@ -14,6 +14,11 @@ const PostSchema = new Schema({
     required: true,
   },
 
+  title: {
+    type: String,
+    required: true,
+  },
+
   content: {
     type: String,
     required: true,
