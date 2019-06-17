@@ -9,7 +9,7 @@ const UserSchema = new Schema({
     required: true,
     unique: true,
     validate: {
-      validator: username => /[a-zA-Z0-9]{3,}/.test(username),
+      validator: username => /[a-zA-Z0-9]{2,}/.test(username),
     },
   },
 
