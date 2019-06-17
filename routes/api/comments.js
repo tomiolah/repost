@@ -2,6 +2,7 @@ const express = require('express');
 const request = require('request-promise-native');
 
 const Post = require('../../models/post');
+const User = require('../../models/user');
 const Comment = require('../../models/comment');
 
 const router = express.Router();
@@ -94,21 +95,44 @@ router.post('/', async (req, res) => {
 // UP / DOWNVOTE
 router.patch('/:commentID', async (req, res) => {
   const { commentID } = req.query;
-  const { rating } = req.body;
+  const { rating, username } = req.body;
 
-  if (!commentID || (!rating || (rating !== 1 && rating !== -1))) {
+  if ([commentID, rating, username].every(value => value !== undefined)) {
+    res.sendStatus(400);
+    return;
+  }
+
+  if (![-1, 0, 1].includes(rating)) {
     res.sendStatus(400);
     return;
   }
 
   try {
+    // Check if user exists
+    const user = await User.findOne({ username });
+    if (!user) {
+      res.sendStatus(404);
+      return;
+    }
     const comment = await Comment.findById(commentID);
     if (!comment) {
       res.sendStatus(404);
       return;
     }
-    comment.rating += rating;
-    await Comment.findByIdAndUpdate(commentID, { $set: { rating: comment.rating } });
+    comment.raters[username] = (rating === 0) ? undefined : rating;
+
+    let ratingUpdated = 0;
+    Object.keys(comment.raters).forEach((key) => {
+      ratingUpdated += (comment.raters[key]) ? comment.raters[key] : 0;
+    });
+
+    comment.rating = ratingUpdated;
+    await Comment.findByIdAndUpdate(commentID, {
+      $set: {
+        rating: comment.rating,
+        raters: comment.raters,
+      },
+    });
     res.sendStatus(204);
   } catch (err) {
     console.error(err);

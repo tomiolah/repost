@@ -33,6 +33,11 @@ const CommentSchema = new Schema({
     type: String,
     default: undefined,
   },
+
+  raters: {
+    type: Object,
+    default: [],
+  },
 });
 
 const Comment = mongoose.model('comment', CommentSchema);
