@@ -56,39 +56,88 @@ async function pageLoaded() {
 pageLoaded();
 
 function addUser() {
+  const subrepost = document.getElementById('sr-name').innerText;
   UIkit.modal.prompt('User to add:', '')
-    .then((username) => {
-      // TODO
-      if (username) console.log(username);
-      pageLoaded();
+    .then(async (username) => {
+      if (username) {
+        await fetch(`/api/subreposts/${subrepost}`, {
+          method: 'PATCH',
+          json: true,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username, moderator: false }),
+        });
+        pageLoaded();
+      }
     });
 }
 
 function addMod() {
+  const subrepost = document.getElementById('sr-name').innerText;
   UIkit.modal.prompt('User to add as Moderator:', '')
-    .then((username) => {
-      // TODO
-      if (username) console.log(username);
-      pageLoaded();
+    .then(async (username) => {
+      if (username) {
+        await fetch(`/api/subreposts/${subrepost}`, {
+          method: 'PATCH',
+          json: true,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username, moderator: true }),
+        });
+        pageLoaded();
+      }
     });
 }
 
-async function deleteSub(subrepost) {
+function deleteSub(subrepost) {
   UIkit.modal.prompt(`<h1 class="uk-text-danger">WARNING!</h1> This operation cannot be undone! <div class="uk-alert-danger" uk-alert><p>To confirm your request please type in the name of this subrepost (<b>${subrepost}</b>):</p></div>`, '')
-    .then((input) => {
-      // TODO
-      if (input === subrepost) console.log('delet this.');
+    .then(async (input) => {
+      if (input === subrepost) {
+        await fetch(`/api/subreposts/${subrepost}`, {
+          method: 'DELETE',
+        });
+        window.location = '/home';
+      }
     });
 }
 
-function ban(username) {
-  // TODO
+async function ban(username) {
+  const subrepost = document.getElementById('sr-name').innerText;
+  await fetch(`/api/subreposts/${subrepost}`, {
+    method: 'PATCH',
+    json: true,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ username, remove: true }),
+  });
+  pageLoaded();
 }
 
-function downgrade(username) {
-  // TODO
+async function downgrade(username) {
+  const subrepost = document.getElementById('sr-name').innerText;
+  await fetch(`/api/subreposts/${subrepost}`, {
+    method: 'PATCH',
+    json: true,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ username, moderator: false }),
+  });
+  pageLoaded();
 }
 
-function upgrade(username) {
-  // TODO
+async function upgrade(username) {
+  const subrepost = document.getElementById('sr-name').innerText;
+  await fetch(`/api/subreposts/${subrepost}`, {
+    method: 'PATCH',
+    json: true,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ username, moderator: true }),
+  });
+  pageLoaded();
 }

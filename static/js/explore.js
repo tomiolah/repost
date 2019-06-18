@@ -6,7 +6,18 @@
 async function join(subrepost) {
   UIkit.modal.confirm(`Would you like to join <b>r/${subrepost}</b>?`)
     .then(
-      () => console.log('Confirmed'), // TODO
-      () => console.log('Rejected'), // TODO
+      async () => {
+        // Get username
+        const username = document.getElementById('username').innerText;
+        await fetch(`/api/subreposts/${subrepost}`, {
+          method: 'PATCH',
+          json: true,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username, moderator: false }),
+        });
+      },
+      () => {},
     );
 }
