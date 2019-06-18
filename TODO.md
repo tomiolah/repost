@@ -6,7 +6,7 @@
   - [x] Add entries
 - [ ] Subrepost
   - [x] My Subreposts
-  - [ ] Explore Subreposts 🛠
+  - [x] Explore Subreposts
   - [ ] Join Subrepost 🛠
   - [x] Create Subrepost (User will be Mod) (min KARMA)
   - [x] List Mods
@@ -31,7 +31,7 @@
   - [ ] **Delete Comment** as Mod
 - [x] Authorization
 
-PROGRESS: **35.71 %** ✅
+PROGRESS: **39.28 %** ✅
 ```
-  10 / 28 (18 left)
+  11 / 28 (17 left)
 ```
