@@ -8,7 +8,6 @@ const router = express.Router();
 router.get('/subreposts', async (req, res) => {
   const subreposts = await (await fetch(`${API_URL}/subreposts?username=${req.session.username}`)).json();
   const user = await (await (fetch(`${API_URL}/users/${req.session.username}`))).json();
-  console.log(subreposts);
   res.render('subreposts', {
     layout: 'main',
     username: req.session.username,

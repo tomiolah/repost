@@ -6,15 +6,17 @@
   - [x] Add entries
 - [ ] Subrepost
   - [x] My Subreposts
+  - [ ] Explore Subreposts 🛠
+  - [ ] Join Subrepost 🛠
   - [x] Create Subrepost (User will be Mod) (min KARMA)
   - [x] List Mods
   - [x] List Users
-  - [ ] **Add Mod / Upgrade User as Mod**
-  - [ ] **Add User**
-  - [ ] Add User as User
-  - [ ] **Ban User / Mod**
-  - [ ] **Downgrade Mod**
-  - [ ] **Delete Subrepost**
+  - [ ] **Add Mod / Upgrade User as Mod** 🛠
+  - [ ] **Add User** 🛠
+  - [ ] Add User as User 🛠
+  - [ ] **Ban User / Mod** 🛠
+  - [ ] **Downgrade Mod** 🛠
+  - [ ] **Delete Subrepost** 🛠
 - [ ] Post
   - [ ] My Posts
   - [ ] Posts in Subreposts
@@ -29,7 +31,7 @@
   - [ ] **Delete Comment** as Mod
 - [x] Authorization
 
-PROGRESS: **38.46 %** ✅
+PROGRESS: **35.71 %** ✅
 ```
-  10 / 26 (16 left)
+  10 / 28 (18 left)
 ```

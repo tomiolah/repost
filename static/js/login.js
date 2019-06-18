@@ -16,7 +16,7 @@ async function login(event) {
   }
 
   const data = { username, password };
-  const { status } = await fetch('/login', {
+  const resp = await fetch('/login', {
     method: 'POST',
     json: true,
     headers: {
@@ -25,12 +25,17 @@ async function login(event) {
     body: JSON.stringify(data),
   });
 
-  if (status === 404) {
+  if (resp.status === 401) {
+    UIkit.modal.alert('Invalid login credentials!');
+    return;
+  }
+
+  if (resp.status === 404) {
     UIkit.modal.confirm('No user with provided username! Would you like to register?')
       .then(async () => {
-        // Confirmed - Register
+        // Confirmed => Register
         try {
-          await fetch('/api/users', {
+          const response = await fetch('/register', {
             method: 'POST',
             json: true,
             headers: {
@@ -38,7 +43,8 @@ async function login(event) {
             },
             body: JSON.stringify(data),
           });
-          window.location = '/home';
+          if (response.ok) window.location = '/home';
+          else throw new Error('Whoops...');
           return;
         } catch (err) {
           UIkit.modal.alert('Something went wrong...');
@@ -48,5 +54,5 @@ async function login(event) {
     return;
   }
 
-  window.location = '/home';
+  if (resp.ok) window.location = '/home';
 }

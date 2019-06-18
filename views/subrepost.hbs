@@ -1,36 +1,28 @@
-<h1>r/{{subrepost.name}} <a href="#modal-center" uk-toggle><span uk-icon="icon: info; ratio: 2"></span></a></h1>
+<h1>r/<span id="sr-name">{{subrepost.name}}</span> <a href="#modal-center" uk-toggle><span uk-icon="icon: info; ratio: 2"></span></a></h1>
 <hr>
 
 
 <div id="modal-center" class="uk-flex-top" uk-modal>
   <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
     <button class="uk-modal-close-default" type="button" uk-close></button>
-    <h1>r/{{subrepost.name}}</h1>
+    <h1>r/{{subrepost.name}}
+      {{#if moderator}}
+        <a class="remove" onclick="deleteSub('{{subrepost.name}}')"><span uk-icon="icon: trash; ratio: 1.5"></span></a>
+      {{/if}}
+    </h1>
     <hr>
     <p>{{subrepost.description}}</p>
     {{#if moderator}}
       <div class="uk-child-width-expand@s uk-text-center" uk-grid>
         <div>
           Users
-          <ul class="uk-list uk-list-striped">
-            {{#each subrepost.users}}
-              {{#unless this.moderator}}
-                <li><h3>{{this.username}} <a class="remove"><span uk-icon="icon: ban"></span></a> <a class="add"><span uk-icon="icon: plus-circle"></span></a></h3></li>
-              {{/unless}}
-            {{/each}}
-            <li><a class="add"><span uk-icon="icon: plus-circle; ratio: 1.5"></span></a></li>
+          <ul id="user-list" class="uk-list uk-list-striped">
           </ul>
         </div>
 
         <div>
           Moderators
-          <ul class="uk-list uk-list-striped">
-            {{#each subrepost.users}}
-              {{#if this.moderator}}
-                <li><h3>{{this.username}} <a class="remove"><span uk-icon="icon: ban"></span></a> <a class="remove"><span uk-icon="icon: pull"></span></a></h3></li>
-              {{/if}}
-            {{/each}}
-            <li><a class="add"><span uk-icon="icon: plus-circle; ratio: 1.5"></span></a></li>
+          <ul id="mod-list" class="uk-list uk-list-striped">
           </ul>
         </div>
       </div>
@@ -39,3 +31,4 @@
 </div>
 
 <script src="/static/js/general.js"></script>
+<script src="/static/js/onesr.js"></script>

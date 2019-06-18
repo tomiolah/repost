@@ -12,6 +12,8 @@ const api = require('./routes/api');
 const client = require('./routes/client');
 const services = require('./routes/services');
 
+const { port } = require('./helpers/constants');
+
 const app = express();
 
 app.use(bodyParser.json());
@@ -26,7 +28,7 @@ mongoose.set('useCreateIndex', true);
 // Connect to MongoDB
 mongoose.connect(db)
   .then(() => console.log('📼 :: DB Connection established'))
-  .catch(err => console.err(`!! ${err}`));
+  .catch(err => console.error(`!! ${err}`));
 
 // Set up logging
 app.use(morgan('tiny'));
@@ -62,8 +64,6 @@ app.use(client);
 
 // Test Handlebars
 app.get('/', (req, res) => res.redirect('/home'));
-
-const port = process.env.port || 8080;
 
 app.listen(port, () => console.log(`💻 :: \
 Server listening on ${chalk.blue(`http://${ip.address()}:${port}`)} ...`));

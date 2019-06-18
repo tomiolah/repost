@@ -9,12 +9,12 @@ const router = express.Router();
 
 // GET ALL SRs / BY USER
 router.get('/', async (req, res) => {
-  const { username } = req.query;
+  const { username, inverse } = req.query;
 
   try {
     const subreposts = await Subrepost.find();
     const output = (username)
-      ? subreposts.filter(sr => !!sr.users.find(value => value.username === username))
+      ? subreposts.filter(sr => !!sr.users.find(value => ((inverse) ? (value.username !== username) : value.username === username)))
       : subreposts;
 
     res.json(output);

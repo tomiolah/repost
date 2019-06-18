@@ -85,6 +85,7 @@ router.get('/:username', async (req, res) => {
 
 // POST USER
 router.post('/', async (req, res) => {
+  console.log(req.body);
   try {
     const { username, password } = req.body;
     if (!username || !password) {
@@ -93,7 +94,7 @@ router.post('/', async (req, res) => {
     }
 
     // Check if user already exists
-    const user = await User.find({ username });
+    const user = await User.findOne({ username });
 
     if (user) {
       res.sendStatus(401);

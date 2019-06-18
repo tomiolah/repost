@@ -1,0 +1,20 @@
+<h2>Explore Subreposts</h2>
+<hr>
+{{#each subreposts.data}}
+  <div class="uk-margin">
+    <a onclick="join('{{this.name}}')">
+      <div class="uk-card uk-card-default uk-card-body uk-card-hover">
+        <h2>r/{{this.name}}</h2>
+        <p>{{this.description}}</p>
+      </div>
+    </a>
+  </div>
+{{else}}
+  <div class="uk-card uk-card-default uk-card-body">
+    <h3 class="uk-card-title"><a href="https://thanosjs.org/"><img data-src="/static/img/ig.png" width="5%" uk-img></a> Sigh...</h3>
+    <p>Looks, like Thanos snapped again...</p>
+  </div>
+{{/each}}
+
+<script src="/static/js/general.js"></script>
+<script src="/static/js/explore.js"></script>

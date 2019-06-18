@@ -32,8 +32,16 @@ router.get('/logout', (req, res) => {
 });
 
 router.post('/register', bodyParser.json(), async (req, res) => {
-  console.log(req.body);
-  res.sendStatus(204);
+  const resp = await fetch(`${API_URL}/users`, {
+    method: 'POST',
+    json: true,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(req.body),
+  });
+  if (resp.ok) req.session.username = req.body.username;
+  res.sendStatus(resp.status);
 });
 
 module.exports = router;
