@@ -5,6 +5,8 @@ const Post = require('../../models/post');
 const User = require('../../models/user');
 const Comment = require('../../models/comment');
 
+const { API_URL } = require('../../helpers/constants');
+
 const router = express.Router();
 
 // Get all
@@ -183,7 +185,7 @@ router.delete('/:commentID', async (req, res) => {
     const subcomments = await Comment.find({ parent: commentID });
     // Delete subcomments
     subcomments.forEach(async (subcomment) => {
-      await request.delete(`/api/comments/${subcomment._id}`);
+      await request.delete(`${API_URL}/comments/${subcomment._id}`);
     });
 
     await Comment.findByIdAndDelete(commentID);

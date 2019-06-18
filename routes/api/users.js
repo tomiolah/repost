@@ -7,6 +7,8 @@ const Post = require('../../models/post');
 const Comment = require('../../models/comment');
 const pw = require('../../helpers/password');
 
+const { API_URL } = require('../../helpers/constants');
+
 const router = express.Router();
 
 const calculateRating = async (username) => {
@@ -136,10 +138,10 @@ router.delete('/:username', async (req, res) => {
   try {
     // Remove from Subreposts
     // Get affected SRs
-    const subreposts = await request.get(`/api/subreposts?username=${username}`);
+    const subreposts = await request.get(`${API_URL}/subreposts?username=${username}`);
 
     subreposts.forEach(async (subrepost) => {
-      await request.patch(`/api/subreposts/${subrepost.name}`, {
+      await request.patch(`${API_URL}/subreposts/${subrepost.name}`, {
         json: true,
         body: JSON.stringify({
           username,
@@ -150,14 +152,14 @@ router.delete('/:username', async (req, res) => {
 
     // Remove Posts
     // Get Posts
-    await request.delete(`/api/posts?username=${username}`);
+    await request.delete(`${API_URL}/posts?username=${username}`);
 
     // Remove Comments
     // Get Comments
-    let comments = await request.get(`/api/comments?username=${username}`);
+    let comments = await request.get(`${API_URL}comments?username=${username}`);
 
     comments.forEach(async (comment) => {
-      await request.delete(`/api/comments/${comment._id}`);
+      await request.delete(`${API_URL}comments/${comment._id}`);
     });
 
     // Purge and recalculate votes
@@ -166,7 +168,7 @@ router.delete('/:username', async (req, res) => {
 
     comments.forEach(async (comment) => {
       try {
-        await request.patch(`/api/comments/${comment._id}`, {
+        await request.patch(`${API_URL}/comments/${comment._id}`, {
           json: true,
           body: JSON.stringify({ rating: 0, username }),
         });
@@ -178,7 +180,7 @@ router.delete('/:username', async (req, res) => {
 
     posts.forEach(async (post) => {
       try {
-        await request.patch(`/api/posts/${post._id}`, {
+        await request.patch(`${API_URL}/posts/${post._id}`, {
           json: true,
           body: JSON.stringify({ rating: 0, username }),
         });

@@ -6,6 +6,8 @@ const User = require('../../models/user');
 const Subrepost = require('../../models/subrepost');
 const Post = require('../../models/post');
 
+const { API_URL } = require('../../helpers/constants');
+
 const router = express.Router();
 
 // GET ALL POSTS / BY QUERY
@@ -151,7 +153,7 @@ router.delete('/', async (req, res) => {
       } else if (username) marked = post.username === username;
       else marked = post.subrepost === subrepost;
 
-      if (marked) await request.delete(`/api/posts/${post._id}`);
+      if (marked) await request.delete(`${API_URL}/posts/${post._id}`);
     });
 
     res.sendStatus(204);
@@ -179,10 +181,10 @@ router.delete('/:postID', async (req, res) => {
     }
 
     // Delete Comments
-    await request.delete(`/api/comments?post=${postID}`);
+    await request.delete(`${API_URL}/comments?post=${postID}`);
 
     // Delete from DB
-    await Post.findByIdAndDelete(postID);
+    await Post.deleteOne({ _id: postID });
     res.sendStatus(204);
   } catch (error) {
     console.errror(error);

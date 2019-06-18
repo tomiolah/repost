@@ -1,11 +1,14 @@
 const express = require('express');
 const request = require('request-promise-native');
+const fetch = require('node-fetch');
 
 // User Model
 const User = require('../../models/user');
 const Subrepost = require('../../models/subrepost');
 
 const router = express.Router();
+
+const { API_URL } = require('../../helpers/constants');
 
 // GET ALL SRs / BY USER
 router.get('/', async (req, res) => {
@@ -14,7 +17,10 @@ router.get('/', async (req, res) => {
   try {
     const subreposts = await Subrepost.find();
     const output = (username)
-      ? subreposts.filter(sr => !!sr.users.find(value => ((inverse) ? (value.username !== username) : value.username === username)))
+      ? subreposts.filter(sr => !!sr.users.find(value => (
+        (inverse)
+          ? (value.username !== username)
+          : value.username === username)))
       : subreposts;
 
     res.json(output);
@@ -68,7 +74,7 @@ router.patch('/:subrepost', async (req, res) => {
   const { subrepost } = req.params;
   const { username, moderator, remove } = req.body;
 
-  if (!username || !User.findOne({ username })) {
+  if (!username || !(await User.findOne({ username }))) {
     res.sendStatus(400);
     return;
   }
@@ -92,9 +98,9 @@ router.patch('/:subrepost', async (req, res) => {
 
     sub.mod_count = count;
 
-    if (count === 0) await request.delete(`/api/subreposts/${subrepost}`);
+    if (count === 0) await request.delete(`${API_URL}/subreposts/${subrepost}`);
     else {
-      await Subrepost.updateOne({ subrepost }, {
+      await Subrepost.updateOne({ name: subrepost }, {
         $set: {
           mod_count: sub.mod_count,
           users: sub.users,
@@ -112,7 +118,7 @@ router.patch('/:subrepost', async (req, res) => {
     // Not exists -  Add it
     sub.users.push({
       username,
-      moderator,
+      moderator: !!moderator,
     });
   }
 
@@ -122,7 +128,7 @@ router.patch('/:subrepost', async (req, res) => {
     0,
   );
 
-  if (sub.mod_count === 0) await request.delete(`/api/subreposts/${subrepost}`);
+  if (sub.mod_count === 0) await fetch(`${API_URL}/subreposts/${subrepost}`, { method: 'DELETE' });
   else {
     // Update in DB
     await Subrepost.updateOne({ name: subrepost }, {
@@ -154,11 +160,10 @@ router.delete('/:subrepost', async (req, res) => {
     }
 
     // Delete Posts
-    request.delete(`/api/posts?subrepost=${subrepost}`);
+    await fetch(`${API_URL}/posts?subrepost=${subrepost}`, { method: 'DELETE' });
 
     // Delete SR
-    Subrepost.deleteOne({ name: subrepost });
-
+    await Subrepost.deleteOne({ name: subrepost });
     res.sendStatus(204);
   } catch (err) {
     console.error(err);
