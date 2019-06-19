@@ -14,13 +14,15 @@ router.get('', async (req, res) => {
   const { username, postID, parentID } = req.query;
 
   try {
-    const comments = (await Comment.find().sort({ posted: -1 })).filter((comment) => {
+    const comments = [];
+    (Comment.find().sort({ posted: -1 })).exec(doc => doc.filter((comment) => {
       let verdict = true;
       if (username && comment.username !== username) verdict = false;
       if (postID && comment.post !== postID) verdict = false;
       if (parentID && comment.parent !== parentID) verdict = false;
+      if (verdict) comments.push(comment);
       return verdict;
-    });
+    }));
     res.json(comments);
   } catch (err) {
     console.error(err);
@@ -182,7 +184,7 @@ router.delete('/:commentID', async (req, res) => {
       return;
     }
     // Get subcomments
-    const subcomments = await Comment.find({ parent: commentID });
+    const subcomments = await Comment.find({ parent: commentID }).exec();
     // Delete subcomments
     subcomments.forEach(async (subcomment) => {
       await request.delete(`${API_URL}/comments/${subcomment._id}`);

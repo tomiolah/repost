@@ -15,7 +15,7 @@ router.get('/', async (req, res) => {
   const { username, inverse } = req.query;
 
   try {
-    const subreposts = await Subrepost.find();
+    const subreposts = (await Subrepost.find().exec());
     const output = (username)
       ? subreposts.filter(sr => !!sr.users.find(value => (
         (inverse)

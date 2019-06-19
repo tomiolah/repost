@@ -20,7 +20,9 @@ router.get('/', async (req, res) => {
       if (username) posts = Post.find({ subrepost, username });
       else posts = Post.find({ subrepost });
     } else posts = Post.find({ username });
-    res.json(posts);
+
+    const docs = await posts.exec();
+    res.json(docs);
   } catch (err) {
     console.error(err);
     res.sendStatus(500);
@@ -48,16 +50,21 @@ router.get('/:postID', async (req, res) => {
 
 // Create Post
 router.post('/', async (req, res) => {
-  const { subrepost, username, content } = req.body;
+  const {
+    subrepost,
+    username,
+    title,
+    content,
+  } = req.body;
 
-  if (!subrepost || !username || !content) {
+  if (![subrepost, username, title, content].every(value => value)) {
     res.sendStatus(400);
     return;
   }
 
   try {
     // Check if SR exists
-    const sr = await Subrepost.findOne({ name: subrepost });
+    const sr = await Subrepost.findOne({ name: subrepost }).exec();
 
     if (!sr) {
       res.sendStatus(404);
@@ -72,17 +79,20 @@ router.post('/', async (req, res) => {
       return;
     }
 
-    // Check if user can posts in SR
-    if (sr.users.find(value => value.username === username)) {
+    // Check if user can post in SR
+    if (!sr.users.find(value => value.username === username)) {
       res.sendStatus(401);
       return;
     }
 
-    Post.create({
+    await Post.create({
       subrepost,
       username,
+      title,
       content,
     });
+
+    res.sendStatus(204);
   } catch (error) {
     console.errror(error);
     res.sendStatus(500);
@@ -145,7 +155,7 @@ router.delete('/', async (req, res) => {
   }
 
   try {
-    const posts = await Post.find();
+    const posts = await Post.find().exec();
     posts.forEach(async (post) => {
       let marked = false;
       if (username && subrepost) {

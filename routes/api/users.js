@@ -13,10 +13,10 @@ const router = express.Router();
 
 const calculateRating = async (username) => {
   // Get all Posts
-  const posts = await Post.find({ username });
+  const posts = await Post.find({ username }).exec();
 
   // Get all comments
-  const comments = await Comment.find({ username });
+  const comments = await Comment.find({ username }).exec();
 
   // Calculate rating
   let rating = 0;
@@ -30,7 +30,7 @@ const calculateRating = async (username) => {
 // GET ALL USERS
 router.get('/', async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find().exec();
     const output = [];
 
     users.forEach(async (user) => {
@@ -163,8 +163,8 @@ router.delete('/:username', async (req, res) => {
     });
 
     // Purge and recalculate votes
-    comments = await Comment.find();
-    const posts = await Post.find();
+    comments = await Comment.find().exec();
+    const posts = await Post.find().exec();
 
     comments.forEach(async (comment) => {
       try {
