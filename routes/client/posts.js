@@ -1,8 +1,7 @@
 const express = require('express');
 const fetch = require('node-fetch');
 
-// TODO:
-// const { SERVICES_URL } = require('')
+const { API_URL, SERVICES_URL } = require('../../helpers/constants');
 
 const router = express.Router();
 
@@ -15,7 +14,7 @@ router.get('/p/:postID', async (req, res) => {
   }
 
   // Get Post
-  const post = fetch(`/api/posts/${postID}`);
+  const post = await (await fetch(`${API_URL}/posts/${postID}`)).json();
 
   if (!post) {
     res.sendStatus(404);
@@ -31,12 +30,14 @@ router.get('/p/:postID', async (req, res) => {
     body: JSON.stringify({ markdown: post.content }),
   })).json();
 
+  const date = new Date(post.posted);
+
   res.render('post', {
     layout: 'main',
     username: req.session.username,
     post: {
       post,
-      date: `${post.posted.getFullYear()}/${post.posted.getMonth() + 1}/${post.posted.getDay()}`,
+      date: `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDay()}`,
       html: result.html,
     },
   });

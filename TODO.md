@@ -24,7 +24,7 @@
   - [x] Create Post
   - [x] Display Post (Markdown rendering)
   - [ ] Post Page (OP / Mod OR User) 🛠
-  - [ ] Migrate MD Rendering to Post Page 🛠
+  - [x] Migrate MD Rendering to Post Page 🛠
   - [ ] Delete Post as OP 🛠
   - [ ] **Delete Post** as Mod 🛠
   - [ ] Remove MD Rendering Test ❗️
@@ -37,14 +37,14 @@
 
 PROGRESS: **67.74 %** ✅
 ```
-  21 / 31 (10 left)
+  22 / 31 (10 left)
 ```
 
 ```
 
 31 ... 100 %
-21 ...  x
+22 ...  x
 -------------
-x = ( 21 * 100 ) / 31
+x = ( 22 * 100 ) / 31
 
 ```
