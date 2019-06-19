@@ -19,12 +19,15 @@
   - [x] **Delete Subrepost**
 - [ ] Post
   - [ ] My Posts
-  - [ ] Posts in Subreposts
-  - [ ] Upvote / Downvote
-  - [ ] Create Post
-  - [ ] Display Post (Markdown rendering)
-  - [ ] Delete Post as OP
-  - [ ] **Delete Post** as Mod
+  - [x] Posts in Subreposts
+  - [ ] Upvote / Downvote 🛠
+  - [x] Create Post
+  - [x] Display Post (Markdown rendering)
+  - [ ] Post Page (OP / Mod OR User) 🛠
+  - [ ] Migrate MD Rendering to Post Page 🛠
+  - [ ] Delete Post as OP 🛠
+  - [ ] **Delete Post** as Mod 🛠
+  - [ ] Remove MD Rendering Test ❗️
 - [ ] Comment
   - [ ] Upvote / Downvote
   - [ ] Add Comment to Post
@@ -32,7 +35,16 @@
   - [ ] **Delete Comment** as Mod
 - [x] Authorization
 
-PROGRESS: **62.069 %** ✅
+PROGRESS: **67.74 %** ✅
 ```
-  18 / 29 (11 left)
+  21 / 31 (10 left)
+```
+
+```
+
+31 ... 100 %
+21 ...  x
+-------------
+x = ( 21 * 100 ) / 31
+
 ```

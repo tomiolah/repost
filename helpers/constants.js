@@ -11,6 +11,8 @@ exports.crypto = {
 
 exports.port = port;
 
+exports.SERVICES_URL = `http://${ip.address()}:${port}/services`;
+
 exports.API_URL = `http://${ip.address()}:${port}/api`;
 
 exports.minKarma = 0;

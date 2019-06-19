@@ -1,7 +1,7 @@
 const express = require('express');
 const fetch = require('node-fetch');
 
-const { API_URL, minKarma } = require('../../helpers/constants');
+const { API_URL, minKarma, SERVICES_URL } = require('../../helpers/constants');
 
 const router = express.Router();
 
@@ -40,11 +40,32 @@ router.get('/r/:subrepost', async (req, res) => {
 
   const role = sr.users.find(value => value.username === req.session.username);
 
+  // Get Posts from SR
+  const posts = await (await fetch(`${API_URL}/posts?subrepost=${subrepost}`)).json();
+
+  const data = [];
+
+  posts.forEach(async (post) => {
+    const date = new Date(post.posted);
+    const dateStr = `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDay()}`;
+    const { content } = post;
+    const result = await (await fetch(`${SERVICES_URL}/md2html`, {
+      method: 'post',
+      json: true,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ markdown: content }),
+    })).json();
+    data.push({ date: dateStr, post, html: result.html });
+  });
+
   res.render('subrepost', {
     layout: 'main',
     username: req.session.username,
     subrepost: sr,
     moderator: !!(role.moderator),
+    posts: data,
   });
 });
 

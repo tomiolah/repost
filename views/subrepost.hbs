@@ -1,5 +1,30 @@
 <h1>r/<span id="sr-name">{{subrepost.name}}</span> <a href="#modal-center" uk-toggle><span uk-icon="icon: info; ratio: 2"></span></a></h1>
 <hr>
+{{!-- Posts --}}
+<ul class="uk-list">
+  <li>
+    <div class="uk-card uk-card-body uk-card-default">
+      <h3 class="uk-card-title">New Post</h3>
+      <form id="newPost" onsubmit="post('{{subrepost.name}}', '{{username}}', event)">
+        <div class="uk-margin"><input class="uk-input" type="text" name="title" id="title" placeholder="Post Title" required></div>
+        <div class="uk-margin"><textarea placeholder="Content" name="content" class="uk-textarea" id="content" cols="30" required></textarea></div>
+        <p class="uk-link"><a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet">Markdown Cheatsheet</a></p>
+        <input id="submitPost" class="uk-button uk-button-primary" type="submit" value="Post" hidden>
+      </form>
+    </div>
+  </li>
+  <hr>
+{{#each posts}}
+  <li>
+    <a href="/p/{{this.post._id}}">
+      <div class="uk-card uk-card-body uk-card-default">
+        <h1>{{this.post.title}}</h1> <p>by <b>{{this.post.username}}</b> on <b>{{this.date}}</b></p>
+      </div>
+    </a>
+  </li>
+{{/each}}
+</ul>
+
 
 
 <div id="modal-center" class="uk-flex-top" uk-modal>

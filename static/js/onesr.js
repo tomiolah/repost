@@ -141,3 +141,34 @@ async function upgrade(username) {
   });
   pageLoaded();
 }
+
+async function post(subrepost, username, event) {
+  event.preventDefault();
+
+  // Get Data
+  const form = document.getElementById('newPost');
+  const data = {
+    username,
+    subrepost,
+    title: form[0].value,
+    content: form[1].value,
+  };
+
+  const resp = await fetch('/api/posts', {
+    method: 'POST',
+    json: true,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (resp.ok) {
+    UIkit.modal.dialog('<p class="uk-modal-body">Posted!</p>');
+    setTimeout(() => window.location.reload(), 3000);
+  } else UIkit.modal.alert('<p class="uk-modal-body">Something went wrong...</p>');
+}
+
+document.getElementById('content').oninput = (ev) => { document.getElementById('submitPost').hidden = !((document.getElementById('content').value)); };
+
+hljs.initHighlightingOnLoad();
