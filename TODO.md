@@ -18,21 +18,19 @@
   - [x] **Downgrade Mod**
   - [x] **Delete Subrepost**
 - [ ] Post
-  - [ ] My Posts
+  - [ ] My Posts 🛠 (DATE!!!)
   - [x] Posts in Subreposts
   - [ ] Upvote / Downvote 🛠
   - [x] Create Post
   - [x] Display Post (Markdown rendering)
   - [ ] Post Page (OP / Mod OR User) 🛠
   - [x] Migrate MD Rendering to Post Page 🛠
-  - [ ] Delete Post as OP 🛠
-  - [ ] **Delete Post** as Mod 🛠
+  - [ ] Delete Post as OP / Mod 🛠
   - [ ] Remove MD Rendering Test ❗️
 - [ ] Comment
   - [ ] Upvote / Downvote
-  - [ ] Add Comment to Post
-  - [ ] Delete Comment As OP
-  - [ ] **Delete Comment** as Mod
+  - [x] Add Comment to Post
+  - [ ] Delete Comment As OP / Post OP / Mod 🛠
 - [x] Authorization
 
 PROGRESS: **67.74 %** ✅

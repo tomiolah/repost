@@ -4,3 +4,41 @@
 </div>
 
 <hr>
+
+<ul class="uk-list">
+  <li>
+    <div class="uk-card uk-card-body uk-card-default">
+      <h3 class="uk-card-title">Add Comment</h3>
+      <form id="newPost" onsubmit="comment('{{post.post._id}}', '{{username}}', event)">
+        <div class="uk-margin"><textarea placeholder="Content" name="content" class="uk-textarea" id="content" cols="30" required></textarea></div>
+        <input id="submitComment" class="uk-button uk-button-primary" type="submit" value="Post">
+      </form>
+    </div>
+  </li>
+  <hr>
+  {{#each comments}}
+    <li onclick="showComment('{{this.comment._id}}')">
+      <div class="uk-card uk-card-default uk-card-body">
+        <p><b>{{this.comment.username}}</b> on <b>{{this.date}}</b></p>
+        <p>{{this.comment.content}}</p>
+      </div>
+    </li>
+  {{/each}}
+</ul>
+
+<div id="oneComment" uk-modal>
+    <div class="uk-modal-dialog">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <div class="uk-modal-body">
+          <p><b id="commUser"></b> on <b id="commDate"></b></p>
+          <p id="commBody"></p>
+          <hr>
+          <ul id="subcomments" class="uk-list">
+
+          </ul>
+        </div>
+    </div>
+</div>
+
+<script src="/static/js/comments.js"></script>
+<script src="/static/js/general.js"></script>

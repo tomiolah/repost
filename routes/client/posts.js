@@ -5,6 +5,11 @@ const { API_URL, SERVICES_URL } = require('../../helpers/constants');
 
 const router = express.Router();
 
+router.get('/myposts', async (req, res) => {
+  // TODO
+  const posts = await fetch(`${API_URL}/posts?username=${req.session.username}`);
+});
+
 router.get('/p/:postID', async (req, res) => {
   const { postID } = req.params;
 
@@ -32,6 +37,18 @@ router.get('/p/:postID', async (req, res) => {
 
   const date = new Date(post.posted);
 
+  // Get root comments
+  const comments = await (await fetch(`${API_URL}/comments?root=true&postID=${postID}`)).json();
+  const comms = [];
+
+  comments.forEach((comment) => {
+    const datee = new Date(comment.posted);
+    comms.push({
+      comment,
+      date: `${datee.getFullYear()}/${datee.getMonth() + 1}/${datee.getDay()}`,
+    });
+  });
+
   res.render('post', {
     layout: 'main',
     username: req.session.username,
@@ -40,6 +57,7 @@ router.get('/p/:postID', async (req, res) => {
       date: `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDay()}`,
       html: result.html,
     },
+    comments: comms,
   });
 });
 

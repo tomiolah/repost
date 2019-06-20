@@ -9,20 +9,38 @@ const { API_URL } = require('../../helpers/constants');
 
 const router = express.Router();
 
+function help2(comment, parentID, root) {
+  if (parentID && comment.parent === parentID) return false;
+  if (root && comment.parent) return false;
+  return true;
+}
+
+function help(comment, username, postID, parentID, root) {
+  if (username && comment.username !== username) return false;
+  if (postID && comment.post !== postID) return false;
+  return help2(comment, parentID, root);
+}
+
 // Get all
 router.get('', async (req, res) => {
-  const { username, postID, parentID } = req.query;
+  const {
+    username,
+    postID,
+    parentID,
+    root,
+  } = req.query;
 
   try {
     const comments = [];
-    (Comment.find().sort({ posted: -1 })).exec(doc => doc.filter((comment) => {
-      let verdict = true;
-      if (username && comment.username !== username) verdict = false;
-      if (postID && comment.post !== postID) verdict = false;
-      if (parentID && comment.parent !== parentID) verdict = false;
+    const resp = await Comment.find()
+      .sort({ posted: -1 })
+      .exec();
+
+    resp.filter((comment) => {
+      const verdict = help(comment, username, postID, parentID, root);
       if (verdict) comments.push(comment);
       return verdict;
-    }));
+    });
     res.json(comments);
   } catch (err) {
     console.error(err);
