@@ -110,7 +110,7 @@ router.patch('/:postID', async (req, res) => {
 
   try {
     // Check if Post exists
-    const post = await Post.findById(postID);
+    const post = await Post.findOne({ _id: postID });
 
     if (!post) {
       res.sendStatus(404);
@@ -125,17 +125,27 @@ router.patch('/:postID', async (req, res) => {
     }
 
     // Update data
-    post.raters[username] = (rating === 0) ? undefined : rating;
+    const ctrl = post.raters.findIndex(value => value.username === username);
+
+    if (ctrl === -1) post.raters.push({ username, rating });
+    else post.raters[ctrl].rating = rating;
+
+    console.log(post.raters);
 
     let ratingUpdated = 0;
-    Object.keys(post.raters).forEach((key) => {
-      ratingUpdated += (post.raters[key]) ? post.raters[key] : 0;
+    post.raters.forEach((value) => {
+      ratingUpdated += value.rating;
     });
 
     post.rating = ratingUpdated;
 
     // Update in DB
-    Post.findByIdAndUpdate(postID, { $set: { rating: post.rating, raters: post.raters } });
+    await Post.findByIdAndUpdate(postID, {
+      $set: {
+        rating: post.rating,
+        raters: post.raters,
+      },
+    }).exec();
 
     res.sendStatus(204);
   } catch (error) {
@@ -190,13 +200,13 @@ router.delete('/:postID', async (req, res) => {
     }
 
     // Delete Comments
-    await request.delete(`${API_URL}/comments?post=${postID}`);
+    await request.delete(`${API_URL}/comments?postID=${postID}`);
 
     // Delete from DB
     await Post.deleteOne({ _id: postID });
     res.sendStatus(204);
   } catch (error) {
-    console.errror(error);
+    console.error(error);
     res.sendStatus(500);
   }
 });

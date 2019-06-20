@@ -13,15 +13,18 @@ const { API_URL } = require('../../helpers/constants');
 // GET ALL SRs / BY USER
 router.get('/', async (req, res) => {
   const { username, inverse } = req.query;
-
   try {
     const subreposts = (await Subrepost.find().exec());
     const output = (username)
-      ? subreposts.filter(sr => !!sr.users.find(value => (
-        (inverse)
-          ? (value.username !== username)
-          : value.username === username)))
+      ? subreposts.filter((sr) => {
+        console.log(sr);
+        return (inverse)
+          ? (sr.users.every(value => (value.username !== username)))
+          : (sr.users.some(value => (value.username === username)));
+      })
       : subreposts;
+
+    console.log(output);
 
     res.json(output);
   } catch (err) {

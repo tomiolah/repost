@@ -8,12 +8,12 @@
 // Work out how to open the Off-Screen Navbar
 
 // Mouse wheel support for debugging
-onmousewheel = (ev) => {
-  // Mouse wheel Up -> Open Navbar
-  if (ev.deltaY === 100) UIkit.offcanvas('#navbar').show();
-  // Mouse wheel Down -> Close Navbar
-  else UIkit.offcanvas('#navbar').hide();
-};
+// onmousewheel = (ev) => {
+//   // Mouse wheel Up -> Open Navbar
+//   if (ev.deltaY === 100) UIkit.offcanvas('#navbar').show();
+//   // Mouse wheel Down -> Close Navbar
+//   else UIkit.offcanvas('#navbar').hide();
+// };
 
 // Arrow Key Support for Desktop
 onkeydown = (ev) => {

@@ -17,6 +17,7 @@ async function join(subrepost) {
           },
           body: JSON.stringify({ username, moderator: false }),
         });
+        window.location = '/subreposts';
       },
       () => {},
     );

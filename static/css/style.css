@@ -13,10 +13,38 @@
   margin-top: -1em;
 }
 
+.karma {
+  color: #ffb004;
+}
+
 .add {
   color: green;
 }
 
 .remove {
   color: firebrick;
+}
+
+.inactive_upvote, .inactive_downvote {
+  color: #424242;
+}
+
+.inactive_upvote:hover {
+  color:  green;
+}
+
+.inactive_downvote:hover {
+  color: firebrick
+}
+
+.upvoted {
+  color:  rgb(18, 165, 18);
+}
+
+.downvoted {
+  color: firebrick
+}
+
+.upvoted:hover, .downvoted:hover {
+  color: #424242;
 }

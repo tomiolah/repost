@@ -72,7 +72,12 @@
       content: String,
       posted: Date,
       rating: Number,
-      raters: [ username: rating ],
+      raters: [ 
+        {
+          username: String,
+          rating: Number
+        }
+      ],
     }
   ```
 
@@ -108,7 +113,12 @@
       rating: Number,
       post: ObjectID,
       parent: ObjectID | undefined,
-      raters: [ username: rating ],
+      raters: [ 
+        {
+          username: String,
+          rating: Number
+        }
+      ],
     }
   ```
 

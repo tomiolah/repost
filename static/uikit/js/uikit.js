@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 /*! UIkit 3.1.5 | http://www.getuikit.com | (c) 2014 - 2018 YOOtheme | MIT License */
 
 (function (global, factory) {

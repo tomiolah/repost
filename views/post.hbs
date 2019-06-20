@@ -1,5 +1,40 @@
 <div class="uk-card uk-card-body uk-card-default">
-  <h1>{{post.post.title}}</h1> <p>by <b>{{post.post.username}}</b> on <b>{{post.date}}</b></p>
+  <h1>
+    {{#if rating}}
+      {{#if upvote}}
+        <a class="upvote" onclick="upvotePost('{{post.post._id}}')" id="inactive_upvote_post" hidden><span class="inactive_upvote" uk-icon="icon: arrow-up; ratio: 2"></span></a>
+        <a class="upvote" onclick="resetRatingPost('{{post.post._id}}')" id="upvoted_post"><span class="upvoted" uk-icon="icon: arrow-up; ratio: 2"></span></a>
+        <span class="karma" id="postVote">{{post.post.rating}}</span>
+        <a class="downvote" onclick="resetRatingPost('{{post.post._id}}')" id="inactive_downvote_post"><span class="inactive_downvote" uk-icon="icon: arrow-down; ratio: 2"></span></a>
+        <a class="downvote" onclick="resetRatingPost('{{post.post._id}}')" id="downvoted_post" hidden><span class="downvoted" uk-icon="icon: arrow-down; ratio: 2"></span></a>
+      {{else}}
+        <a class="upvote" onclick="resetRatingPost('{{post.post._id}}')" id="inactive_upvote_post"><span class="inactive_upvote" uk-icon="icon: arrow-up; ratio: 2"></span></a>
+        <a class="upvote" onclick="resetRatingPost('{{post.post._id}}')" id="upvoted_post" hidden><span class="upvoted" uk-icon="icon: arrow-up; ratio: 2"></span></a>
+        <span class="karma" id="postVote">{{post.post.rating}}</span>
+        <a class="downvote" onclick="downvotePost('{{post.post._id}}')" id="inactive_downvote_post" hidden><span class="inactive_downvote" uk-icon="icon: arrow-down; ratio: 2"></span></a>
+        <a class="downvote" onclick="resetRatingPost('{{post.post._id}}')" id="downvoted_post"><span class="downvoted" uk-icon="icon: arrow-down; ratio: 2"></span></a>
+      {{/if}}
+    {{else}}
+      <a class="upvote" onclick="upvotePost('{{post.post._id}}')" id="inactive_upvote_post"><span class="inactive_upvote" uk-icon="icon: arrow-up; ratio: 2"></span></a>
+      <a class="upvote" onclick="resetRatingPost('{{post.post._id}}')" id="upvoted_post" hidden><span class="upvoted" uk-icon="icon: arrow-up; ratio: 2"></span></a>
+      <span class="karma" id="postVote">{{post.post.rating}}</span>
+      <a class="downvote" onclick="downvotePost('{{post.post._id}}')" id="inactive_downvote_post"><span class="inactive_downvote" uk-icon="icon: arrow-down; ratio: 2"></span></a>
+      <a class="downvote" onclick="resetRatingPost('{{post.post._id}}')" id="downvoted_post" hidden><span class="downvoted" uk-icon="icon: arrow-down; ratio: 2"></span></a>
+    {{/if}}
+    
+    {{post.post.title}}
+    {{#if del}}
+      <a onclick="removePost('{{post.post._id}}')"><span class="remove" uk-icon="icon: trash; ratio: 2"></span></a>
+    {{/if}}
+  </h1>
+  
+  <p>
+    by
+    <b>{{post.post.username}}</b>
+    on
+    <b>{{post.date}}</b>
+    <span id="postID" hidden>{{post.post._id}}</span>
+  </p>
   <div>{{{post.html}}}</div>
 </div>
 
@@ -9,7 +44,7 @@
   <li>
     <div class="uk-card uk-card-body uk-card-default">
       <h3 class="uk-card-title">Add Comment</h3>
-      <form id="newPost" onsubmit="comment('{{post.post._id}}', '{{username}}', event)">
+      <form id="newComm" onsubmit="comment('{{post.post._id}}', '{{username}}', event)">
         <div class="uk-margin"><textarea placeholder="Content" name="content" class="uk-textarea" id="content" cols="30" required></textarea></div>
         <input id="submitComment" class="uk-button uk-button-primary" type="submit" value="Post">
       </form>
@@ -17,28 +52,50 @@
   </li>
   <hr>
   {{#each comments}}
-    <li onclick="showComment('{{this.comment._id}}')">
-      <div class="uk-card uk-card-default uk-card-body">
-        <p><b>{{this.comment.username}}</b> on <b>{{this.date}}</b></p>
-        <p>{{this.comment.content}}</p>
-      </div>
+    <li>
+      <a onclick="showOneComment('{{this.comment._id}}')">
+        <div class="uk-card uk-card-default uk-card-body">
+          <p><b>{{this.comment.username}}</b> on <b>{{this.date}}</b></p>
+          <p>{{this.comment.content}}</p>
+        </div>
+      </a>
     </li>
+  {{else}}
+    <div class="uk-card uk-card-default uk-card-body">
+      <h3 class="uk-card-title"><a href="https://thanosjs.org/"><img data-src="/static/img/ig.png" width="5%" uk-img></a> Sigh...</h3>
+      <p>Looks, like Thanos snapped again...</p>
+    </div>
   {{/each}}
 </ul>
 
 <div id="oneComment" uk-modal>
-    <div class="uk-modal-dialog">
-        <button class="uk-modal-close-default" type="button" uk-close></button>
-        <div class="uk-modal-body">
-          <p><b id="commUser"></b> on <b id="commDate"></b></p>
-          <p id="commBody"></p>
-          <hr>
-          <ul id="subcomments" class="uk-list">
-
-          </ul>
+  <div class="uk-modal-dialog" uk-overflow-auto>
+      <button class="uk-modal-close-default" type="button" uk-close></button>
+      <div class="uk-modal-body">
+        <a class="upvote" id="inactive_upvote"><span class="inactive_upvote" uk-icon="icon: arrow-up; ratio: 2"></span></a>
+        <a class="upvote" id="upvoted"><span class="upvoted" uk-icon="icon: arrow-up; ratio: 2"></span></a>
+        <span class="karma" id="modalVote"></span>
+        <a class="downvote" id="inactive_downvote"><span class="inactive_downvote" uk-icon="icon: arrow-down; ratio: 2"></span></a>
+        <a class="downvote" id="downvoted"><span class="downvoted" uk-icon="icon: arrow-down; ratio: 2"></span></a>
+        <a id="delComm" hidden><span class="remove" uk-icon="icon: trash; ratio: 2"></span></a>
+        <p><b id="commUser"></b> on <b id="commDate"></b></p>
+        <p id="commBody"></p>
+        <hr>
+        <div class="uk-card uk-card-body uk-card-default">
+          <h3 class="uk-card-title">Add Comment</h3>
+          <form id="newModalComment">
+            <div class="uk-margin"><textarea placeholder="Content" name="content" class="uk-textarea" id="modalContent" cols="30" required></textarea></div>
+            <input id="submitComment" class="uk-button uk-button-primary" type="submit" value="Post">
+          </form>
         </div>
-    </div>
+        <hr>
+        <ul id="subcomments" class="uk-list">
+
+        </ul>
+      </div>
+  </div>
 </div>
 
 <script src="/static/js/comments.js"></script>
+<script src="/static/js/post.js"></script>
 <script src="/static/js/general.js"></script>

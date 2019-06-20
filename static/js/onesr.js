@@ -8,49 +8,51 @@ async function pageLoaded() {
   const subrepost = document.getElementById('sr-name').innerText;
   const sr = await (await fetch(`/api/subreposts/${subrepost}`)).json();
 
-  const userListHTML = [];
-  const modListHTML = [];
+  if (document.getElementById('mod-list') && document.getElementById('user-list')) {
+    const userListHTML = [];
+    const modListHTML = [];
 
-  // Create HTML elements
-  sr.users.forEach((value) => {
-    if (value.moderator) {
-      modListHTML.push(`
-        <li>
-          <h3>${value.username}&nbsp;
-            <a onclick="ban('${value.username}')" class="remove">
-              <span uk-icon="icon: ban"></span>
-            </a>&nbsp;
-            <a onclick="downgrade('${value.username}')" class="remove">
-              <span uk-icon="icon: pull"></span>
-            </a>
-          </h3>
-        </li>
-      `);
-    } else {
-      userListHTML.push(`
-        <li>
-          <h3>${value.username}&nbsp;
-            <a onclick="ban('${value.username}')" class="remove">
-              <span uk-icon="icon: ban"></span>
-            </a>&nbsp;
-            <a onclick="upgrade('${value.username}')" class="add">
-              <span uk-icon="icon: plus-circle"></span>
-            </a>
-          </h3>
-        </li>
-      `);
-    }
-  });
+    // Create HTML elements
+    sr.users.forEach((value) => {
+      if (value.moderator) {
+        modListHTML.push(`
+          <li>
+            <h3>${value.username}&nbsp;
+              <a onclick="ban('${value.username}')" class="remove">
+                <span uk-icon="icon: ban"></span>
+              </a>&nbsp;
+              <a onclick="downgrade('${value.username}')" class="remove">
+                <span uk-icon="icon: pull"></span>
+              </a>
+            </h3>
+          </li>
+        `);
+      } else {
+        userListHTML.push(`
+          <li>
+            <h3>${value.username}&nbsp;
+              <a onclick="ban('${value.username}')" class="remove">
+                <span uk-icon="icon: ban"></span>
+              </a>&nbsp;
+              <a onclick="upgrade('${value.username}')" class="add">
+                <span uk-icon="icon: plus-circle"></span>
+              </a>
+            </h3>
+          </li>
+        `);
+      }
+    });
 
-  modListHTML.push('<li><a class="add" onclick="addMod()"><span uk-icon="icon: plus-circle; ratio: 1.5"></span></a></li>');
-  userListHTML.push('<li><a class="add" onclick="addUser()"><span uk-icon="icon: plus-circle; ratio: 1.5"></span></a></li>');
+    modListHTML.push('<li><a class="add" onclick="addMod()"><span uk-icon="icon: plus-circle; ratio: 1.5"></span></a></li>');
+    userListHTML.push('<li><a class="add" onclick="addUser()"><span uk-icon="icon: plus-circle; ratio: 1.5"></span></a></li>');
 
-  // Clear lists
-  document.getElementById('mod-list').innerText = '';
-  document.getElementById('user-list').innerText = '';
-  // Inject into HTML
-  modListHTML.forEach(elem => document.getElementById('mod-list').insertAdjacentHTML('beforeend', elem));
-  userListHTML.forEach(elem => document.getElementById('user-list').insertAdjacentHTML('beforeend', elem));
+    // Clear lists
+    document.getElementById('mod-list').innerText = '';
+    document.getElementById('user-list').innerText = '';
+    // Inject into HTML
+    modListHTML.forEach(elem => document.getElementById('mod-list').insertAdjacentHTML('beforeend', elem));
+    userListHTML.forEach(elem => document.getElementById('user-list').insertAdjacentHTML('beforeend', elem));
+  }
 }
 
 pageLoaded();
@@ -165,7 +167,7 @@ async function post(subrepost, username, event) {
 
   if (resp.ok) {
     UIkit.modal.dialog('<p class="uk-modal-body">Posted!</p>');
-    setTimeout(() => window.location.reload(), 3000);
+    setTimeout(() => window.location.reload(), 1000);
   } else UIkit.modal.alert('<p class="uk-modal-body">Something went wrong...</p>');
 }
 

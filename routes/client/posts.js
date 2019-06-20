@@ -6,8 +6,22 @@ const { API_URL, SERVICES_URL } = require('../../helpers/constants');
 const router = express.Router();
 
 router.get('/myposts', async (req, res) => {
-  // TODO
-  const posts = await fetch(`${API_URL}/posts?username=${req.session.username}`);
+  const posts = await (await fetch(`${API_URL}/posts?username=${req.session.username}`)).json();
+  const output = [];
+
+  posts.forEach((post) => {
+    const date = new Date(post.posted);
+    output.push({ post, date: `${date.getFullYear()}/${date.getMonth()}/${date.getDay()}` });
+  });
+
+  res.render('myposts', {
+    layout: 'main',
+    username: req.session.username,
+    posts: {
+      active: true,
+      post: output,
+    },
+  });
 });
 
 router.get('/p/:postID', async (req, res) => {
@@ -49,6 +63,19 @@ router.get('/p/:postID', async (req, res) => {
     });
   });
 
+  // Get Post SR
+  const sr = await (await fetch(`${API_URL}/subreposts/${post.subrepost}`)).json();
+
+  const userRecord = sr.users.find(value => value.username === req.session.username);
+
+  // SR Mod or OP
+  const del = (post.username === req.session.username) || (userRecord.moderator);
+
+  // Get user Rating history
+  const userInd = post.raters.findIndex(value => value.username === req.session.username);
+
+  const rating = (userInd !== -1) ? post.raters[userInd].rating : 0;
+
   res.render('post', {
     layout: 'main',
     username: req.session.username,
@@ -57,6 +84,10 @@ router.get('/p/:postID', async (req, res) => {
       date: `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDay()}`,
       html: result.html,
     },
+    del,
+    rating: (rating === 0) ? undefined : true,
+    upvote: (rating === 1) ? true : undefined,
+    downvote: (rating === -1) ? true : undefined,
     comments: comms,
   });
 });

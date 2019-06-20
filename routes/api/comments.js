@@ -10,7 +10,7 @@ const { API_URL } = require('../../helpers/constants');
 const router = express.Router();
 
 function help2(comment, parentID, root) {
-  if (parentID && comment.parent === parentID) return false;
+  if (parentID && comment.parent !== parentID) return false;
   if (root && comment.parent) return false;
   return true;
 }
@@ -77,6 +77,13 @@ router.post('/', async (req, res) => {
   } = req.body;
   let { postID } = req.body;
 
+  console.log({
+    username,
+    content,
+    parentID,
+    postID,
+  });
+
   if (!username || !content || (!parentID && !postID)) {
     res.sendStatus(400);
     return;
@@ -84,7 +91,7 @@ router.post('/', async (req, res) => {
 
   if (parentID) {
     // Check if parent exists
-    const parent = await Comment.findById(parentID);
+    const parent = await Comment.findOne({ _id: parentID });
 
     if (!parent) {
       res.sendStatus(400);
@@ -96,7 +103,7 @@ router.post('/', async (req, res) => {
   }
 
   // Check if post exists
-  const post = await Post.findById(postID);
+  const post = await Post.findOne({ _id: postID });
 
   if (!post) {
     res.sendStatus(400);
@@ -104,22 +111,23 @@ router.post('/', async (req, res) => {
   }
 
   // Put it in the DB
-  Comment.create({
+  await Comment.create({
     username,
     content,
     post: postID,
     parent: parentID,
   });
 
+
   res.sendStatus(204);
 });
 
 // UP / DOWNVOTE
 router.patch('/:commentID', async (req, res) => {
-  const { commentID } = req.query;
+  const { commentID } = req.params;
   const { rating, username } = req.body;
 
-  if ([commentID, rating, username].every(value => value !== undefined)) {
+  if (![commentID, rating, username].every(value => value !== undefined)) {
     res.sendStatus(400);
     return;
   }
@@ -131,21 +139,26 @@ router.patch('/:commentID', async (req, res) => {
 
   try {
     // Check if user exists
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ username }).exec();
     if (!user) {
       res.sendStatus(404);
       return;
     }
-    const comment = await Comment.findById(commentID);
+
+    const comment = await Comment.findOne({ _id: commentID }).exec();
     if (!comment) {
       res.sendStatus(404);
       return;
     }
-    comment.raters[username] = (rating === 0) ? undefined : rating;
+
+    const ctrl = comment.raters.findIndex(value => value.username === username);
+
+    if (ctrl === -1) comment.raters.push({ username, rating });
+    else comment.raters[ctrl].rating = rating;
 
     let ratingUpdated = 0;
-    Object.keys(comment.raters).forEach((key) => {
-      ratingUpdated += (comment.raters[key]) ? comment.raters[key] : 0;
+    comment.raters.forEach((value) => {
+      ratingUpdated += value.rating;
     });
 
     comment.rating = ratingUpdated;
@@ -164,7 +177,7 @@ router.patch('/:commentID', async (req, res) => {
 
 // Remove by Post
 router.delete('/', async (req, res) => {
-  const { postID } = req.params;
+  const { postID } = req.query;
 
   if (!postID) {
     res.sendStatus(400);
@@ -173,12 +186,12 @@ router.delete('/', async (req, res) => {
 
   try {
     // Check if post exists
-    const post = await Post.findById(postID);
+    const post = await Post.findOne({ _id: postID });
     if (!post) {
       res.sendStatus(404);
       return;
     }
-    await Comment.deleteMany({ post: postID });
+    await Comment.deleteMany({ post: postID }).exec();
     res.sendStatus(204);
   } catch (err) {
     console.error(err);
@@ -188,7 +201,7 @@ router.delete('/', async (req, res) => {
 
 // Remove By ID
 router.delete('/:commentID', async (req, res) => {
-  const { commentID } = req.query;
+  const { commentID } = req.params;
 
   if (!commentID) {
     res.sendStatus(400);
@@ -196,7 +209,7 @@ router.delete('/:commentID', async (req, res) => {
   }
 
   try {
-    const comment = await Comment.findById(commentID);
+    const comment = await Comment.findOne({ _id: commentID });
     if (!comment) {
       res.sendStatus(404);
       return;
@@ -208,7 +221,7 @@ router.delete('/:commentID', async (req, res) => {
       await request.delete(`${API_URL}/comments/${subcomment._id}`);
     });
 
-    await Comment.findByIdAndDelete(commentID);
+    await Comment.findByIdAndDelete(commentID).exec();
 
     res.sendStatus(204);
   } catch (err) {
