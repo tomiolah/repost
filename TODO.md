@@ -20,30 +20,21 @@
 - [x] Post
   - [x] My Posts
   - [x] Posts in Subreposts
-  - [x] Upvote / Downvote 🛠
+  - [x] Upvote / Downvote
   - [x] Create Post
   - [x] Display Post (Markdown rendering)
   - [x] Post Page
-  - [x] Migrate MD Rendering to Post Page 🛠
-  - [x] Delete Post as OP / Mod 🛠
-  - [ ] Remove MD Rendering Test ❗️
+  - [x] Migrate MD Rendering to Post Page
+  - [x] Delete Post as OP / Mod
+  - [x] Remove MD Rendering Test
 - [x] Comment
   - [x] Upvote / Downvote
   - [x] Add Comment to Post
   - [x] Add Comment to Comment
-  - [x] Delete Comment As OP / Mod 🛠
+  - [x] Delete Comment As OP / Mod
 - [x] Authorization
 
-PROGRESS: **67.74 %** ✅
+PROGRESS: **100 %** ✅
 ```
-  22 / 31 (10 left)
-```
-
-```
-
-31 ... 100 %
-22 ...  x
--------------
-x = ( 22 * 100 ) / 31
-
+  31 / 31 (0 left) 🍺
 ```

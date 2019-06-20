@@ -1,5 +1,4 @@
 const express = require('express');
-const mdtest = require('./client/mdtest');
 const login = require('./auth/login');
 const home = require('./client/home');
 const posts = require('./client/posts');
@@ -8,7 +7,6 @@ const subreposts = require('./client/subreposts');
 
 const router = express.Router();
 
-router.use(mdtest);
 router.use(login);
 
 router.use((req, res, next) => {
